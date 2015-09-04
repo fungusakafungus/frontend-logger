@@ -1,13 +1,13 @@
 {
-    "scale": 1,
+    "scale": 2,
     "components": [{
-        "name": "nginx-fortune",
-        "image": "registry.jimdo-platform.net/nginx-fortune"
+        "name": "frontend-logger",
+        "image": "registry.jimdo-platform.net/frontend-logger"
     }],
     "endpoint": {
-        "component": "nginx-fortune",
+        "component": "frontend-logger",
         "port": 8080,
-        "domain": "nginx-fortune.jimdo-platform.net",
+        "domain": "frontend-logger.jimdo-platform.net",
         "healthcheck": "/healthcheck"
     },
     "notifications": {

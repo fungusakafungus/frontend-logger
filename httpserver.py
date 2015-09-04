@@ -26,7 +26,7 @@ logging.basicConfig(level=logging.INFO)
 def handle(request):
     imgfile = request.match_info.get('imgfile', 'blank.png')
     message = request.GET.get('message', 'frontend.metrics')
-    record = logging.LogRecord('frontend', 6, '', 0, message, None, None)
+    record = logging.LogRecord('frontendi-logger', 6, imgfile, 0, message, None, None)
     if 'referer' in request.headers:
         record.http_referer = request.headers['referer']
     if 'user-agent' in request.headers:
@@ -35,7 +35,7 @@ def handle(request):
     record.__dict__.update(request.GET)
     del record.stack_info
     GRAYLOG.emit(record)
-    logging.info("%s?%s", request, request.query_string)
+    logging.info("%s?%s", request.path, request.query_string)
 
     return web.Response(body=PNG)
 
