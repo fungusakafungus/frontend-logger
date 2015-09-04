@@ -1,0 +1,16 @@
+{
+    "scale": 1,
+    "components": [{
+        "name": "nginx-fortune",
+        "image": "registry.jimdo-platform.net/nginx-fortune"
+    }],
+    "endpoint": {
+        "component": "nginx-fortune",
+        "port": 8080,
+        "domain": "nginx-fortune.jimdo-platform.net",
+        "healthcheck": "/"
+    },
+    "notifications": {
+        "slack": "#ilya-wonderland"
+    }
+}
