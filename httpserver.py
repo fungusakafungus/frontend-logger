@@ -1,3 +1,5 @@
+import sys
+
 import asyncio
 from aiohttp import web
 import logging
@@ -18,7 +20,8 @@ def build_small_png():
 
 
 PNG = build_small_png()
-GRAYLOG = graypy.GELFHandler('graylog2.staging.aws.jimdo-server.com', debugging_fields=False)
+GRAYLOG_HOST = sys.argv[1]
+GRAYLOG = graypy.GELFHandler(GRAYLOG_HOST, debugging_fields=False)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -26,7 +29,7 @@ logging.basicConfig(level=logging.INFO)
 def handle(request):
     imgfile = request.match_info.get('imgfile', 'blank.png')
     message = request.GET.get('message', 'frontend.metrics')
-    record = logging.LogRecord('frontendi-logger', 6, imgfile, 0, message, None, None)
+    record = logging.LogRecord('frontend-logger', 6, imgfile, 0, message, None, None)
     if 'referer' in request.headers:
         record.http_referer = request.headers['referer']
     if 'user-agent' in request.headers:
@@ -48,12 +51,13 @@ def healthcheck(request):
 @asyncio.coroutine
 def init(loop):
     app = web.Application(loop=loop)
+    app.router.add_route('*', '/favicon.ico', lambda request: web.Response())
     app.router.add_route('*', '/healthcheck', healthcheck)
     app.router.add_route('GET', '/{imgfile}', handle)
 
     srv = yield from loop.create_server(app.make_handler(),
                                         '0.0.0.0', 8080)
-    print("Server started at http://0.0.0.0:8080")
+    print("Server started at http://0.0.0.0:8080, logging to %s" % GRAYLOG_HOST)
     return srv
 
 loop = asyncio.get_event_loop()

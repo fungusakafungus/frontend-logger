@@ -15,4 +15,5 @@ RUN /usr/games/fortune > /var/www/index.html
 #ENTRYPOINT /usr/sbin/nginx
 
 COPY httpserver.py /
-ENTRYPOINT /usr/bin/python3 /httpserver.py
+ENTRYPOINT ["python3", "/httpserver.py"]
+CMD ["localhost"]
