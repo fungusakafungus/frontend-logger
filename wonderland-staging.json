@@ -1,13 +1,14 @@
 {
-    "scale": 2,
+    "scale": 1,
     "components": [{
         "name": "frontend-logger",
-        "image": "registry.jimdo-platform.net/frontend-logger"
+        "image": "registry.jimdo-platform.net/frontend-logger",
+        "arguments": ["graylog2.staging.aws.jimdo-server.com"]
     }],
     "endpoint": {
         "component": "frontend-logger",
         "port": 8080,
-        "domain": "frontend-logger.jimdo-platform.net",
+        "domain": "frontend-logger-staging.jimdo-platform.net",
         "healthcheck": "/healthcheck"
     },
     "notifications": {
