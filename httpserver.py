@@ -25,9 +25,15 @@ logging.basicConfig(level=logging.INFO)
 @asyncio.coroutine
 def handle(request):
     imgfile = request.match_info.get('imgfile', 'blank.png')
-    record = logging.LogRecord('frontend', 6, '', 0, 'frontend.metrics', None, None)
-    record.http_host = request.headers['host']
+    message = request.GET.get('message', 'frontend.metrics')
+    record = logging.LogRecord('frontend', 6, '', 0, message, None, None)
+    if 'referer' in request.headers:
+        record.http_referer = request.headers['referer']
+    if 'user-agent' in request.headers:
+        record.http_user_agent = request.headers['user-agent']
     record.query_string = request.query_string
+    record.__dict__.update(request.GET)
+    del record.stack_info
     GRAYLOG.emit(record)
     logging.info("%s?%s", request, request.query_string)
 
