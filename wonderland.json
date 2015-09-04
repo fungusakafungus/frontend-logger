@@ -8,7 +8,7 @@
         "component": "nginx-fortune",
         "port": 8080,
         "domain": "nginx-fortune.jimdo-platform.net",
-        "healthcheck": "/"
+        "healthcheck": "/healthcheck"
     },
     "notifications": {
         "slack": "#ilya-wonderland"

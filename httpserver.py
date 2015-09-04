@@ -18,8 +18,9 @@ def build_small_png():
 
 
 PNG = build_small_png()
-GRAYLOG = graypy.GELFHandler('172.17.42.1', debugging_fields=False)
+GRAYLOG = graypy.GELFHandler('graylog2.staging.aws.jimdo-server.com', debugging_fields=False)
 
+logging.basicConfig(level=logging.INFO)
 
 @asyncio.coroutine
 def handle(request):
@@ -28,13 +29,20 @@ def handle(request):
     record.http_host = request.headers['host']
     record.query_string = request.query_string
     GRAYLOG.emit(record)
+    logging.info("%s?%s", request, request.query_string)
 
     return web.Response(body=PNG)
 
 
 @asyncio.coroutine
+def healthcheck(request):
+    return web.Response(body='OK'.encode('utf-8'))
+
+
+@asyncio.coroutine
 def init(loop):
     app = web.Application(loop=loop)
+    app.router.add_route('*', '/healthcheck', healthcheck)
     app.router.add_route('GET', '/{imgfile}', handle)
 
     srv = yield from loop.create_server(app.make_handler(),
