@@ -23,7 +23,7 @@ PNG = build_small_png()
 GRAYLOG_HOST = sys.argv[1]
 GRAYLOG = graypy.GELFHandler(GRAYLOG_HOST, debugging_fields=False)
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARN)
 
 @asyncio.coroutine
 def handle(request):
@@ -44,6 +44,22 @@ def handle(request):
 
 
 @asyncio.coroutine
+def set_internal_log_level(request):
+    levels = {
+        'DEBUG': 10,
+        'INFO': 20,
+        'WARN': 30,
+        'WARNING': 30,
+        'ERROR': 40,
+        'CRITICAL': 50,
+    }
+
+    level_name = request.GET.get('level')
+    logging.getLogger().level = levels[level_name.upper()]
+    return web.Response(body=('level set to %s\n' % level_name).encode('utf-8'))
+
+
+@asyncio.coroutine
 def healthcheck(request):
     return web.Response(body='OK'.encode('utf-8'))
 
@@ -54,6 +70,7 @@ def init(loop):
     app.router.add_route('*', '/favicon.ico', lambda request: web.Response())
     app.router.add_route('*', '/healthcheck', healthcheck)
     app.router.add_route('GET', '/{imgfile}', handle)
+    app.router.add_route('POST', '/setloglevel', set_internal_log_level)
 
     srv = yield from loop.create_server(app.make_handler(),
                                         '0.0.0.0', 8080)
