@@ -39,6 +39,7 @@ def handle(request):
     del record.stack_info
     GRAYLOG.emit(record)
     logging.info("%s?%s", request.path, request.query_string)
+    logging.debug(request.headers)
 
     return web.Response(body=PNG)
 

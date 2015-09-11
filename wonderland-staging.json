@@ -4,10 +4,17 @@
         "name": "frontend-logger",
         "image": "registry.jimdo-platform.net/frontend-logger",
         "arguments": ["graylog2.staging.aws.jimdo-server.com"]
+    },{
+        "name": "frontend-logger-nginx",
+        "image": "registry.jimdo-platform.net/frontend-logger-nginx",
+        "links": [{
+            "component": "frontend-logger",
+            "alias": "frontend-logger"
+        }]
     }],
     "endpoint": {
-        "component": "frontend-logger",
-        "port": 8080,
+        "component": "frontend-logger-nginx",
+        "port": 80,
         "domain": "frontend-logger-staging.jimdo-platform.net",
         "healthcheck": "/healthcheck"
     },
